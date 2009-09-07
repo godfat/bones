@@ -22,6 +22,7 @@ PROJ = OpenStruct.new(
   :url => "\000",
   :version => ENV['VERSION'] || '0.0.0',
   :exclude => %w(tmp$ bak$ ~$ CVS \.svn/ \.git/ ^pkg/),
+  :include => %w(\A\Z),
   :release_name => ENV['RELEASE'],
 
   # System Defaults
@@ -269,11 +270,12 @@ def manifest
 
   # generate a regular expression from the exclude list
   exclude = Regexp.new(exclude.join('|'))
+  include = Regexp.new(PROJ.include.join('|'))
 
   Find.find '.' do |path|
     path.sub! %r/^(\.\/|\/)/o, ''
     next unless test ?f, path
-    next if path =~ exclude
+    next if path =~ exclude && path !~ include
     files << path
   end
   files.sort!
